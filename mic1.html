@@ -33,6 +33,14 @@
 					
 				var context = theCanvas.getContext("2d");
 				
+				// horizontal zoom
+				var zoomX = 1;
+				var zoomXElement = document.getElementById("zoomX");
+				zoomXElement.addEventListener("change", function (e) {
+						zoomX = e.target.value;
+						drawScreen();
+					},false);
+				
 				drawScreen();
 				
 				function drawScreen() {
@@ -62,9 +70,15 @@
 					var mainScreenHeight = footerY;
 					
 					// hour lines
+					var maxHourLine = 29;
 					var hourLabelY = mainScreenY + 10;
 					var hourLineY = mainScreenY + 15;
 					var hourLineHeight = mainScreenHeight - 5;
+					
+					// horizontal zoom
+					var maxStepBetweenHourLines = 200;
+					
+					cleanFrame();
 					
 					drawBackground();
 					
@@ -76,9 +90,18 @@
 						
 						var hourLineXs = calculateHourLineXs();
 						for(var i=0; i<hourLineXs.length; i++) {
-							drawHourLabel(hourLineXs[i],getHourLabel(i+1));
-							drawHourLine(hourLineXs[i]);
+							if(i < maxHourLine) {
+								drawHourLabel(hourLineXs[i],getHourLabel(i+1));
+								drawHourLine(hourLineXs[i]);
+							}
 						}
+					}
+					
+					function cleanFrame() {
+						context.clearRect(frameX,frameY,frameWidth,frameHeight);
+						context.strokeStyle = "black";
+						context.lineWidth = 1;
+						context.setLineDash([0]);
 					}
 					
 					function drawFrame() {
@@ -90,7 +113,7 @@
 					}
 					
 					function drawFooter() {
-						context.strokeRect(footerX,footerY,footerWidth,footerHeight);
+						context.strokeRect(footerX,footerY,footerWidth,footerHeight+2); //+2 or the line seems blurred
 					}
 					
 					function drawHourLine(x) {
@@ -115,16 +138,25 @@
 					function calculateHourLineXs() {
 						var hourLineXs = new Array();
 						
-						var x = 0;
+						var i = 0;
 						var tempX;
-						var step = mainScreenWidth/30;
-						for(var i=0; i<29; i++) {
-							x += step;
-							tempX = Math.floor(x) + .5;
+						var step = calculateHourLineStep(maxHourLine+1);
+						for(var x=step; x<(mainScreenWidth*zoomX); x+=step) {
+							tempX = Math.floor(x) + .5; //to avoid blurred lines
 							hourLineXs[i] = tempX;
+							i++;
 						}
 						
 						return hourLineXs;
+					}
+					
+					function calculateHourLineStep(numberOfSections) {
+						var step = (mainScreenWidth*zoomX)/numberOfSections;
+						// TODO
+						//if(step > maxStepBetweenHourLines) {
+						//	step = calculateHourLineStep(numberOfSections*2);
+						//}
+						return step;
 					}
 					
 					function getHourLabel(hour) {
@@ -151,5 +183,6 @@
 			Your browser doesn't support HTML5 Canvas!
 			</canvas>
 		</div>
+		<input id="zoomX" type ="range" min="1" max="10" step="0.1" value="1" style="width: 400px" />
 	</body>
 </html>
