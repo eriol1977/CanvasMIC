@@ -33,50 +33,71 @@
 					
 				var context = theCanvas.getContext("2d");
 				
+				// base frame
+				var frameX = 1;
+				var frameY = 1;
+				var frameWidth = theCanvas.width-2;
+				var frameHeight = theCanvas.height-2;
+				
+				// header
+				var headerHeight = 30;
+				var headerX = frameX;
+				var headerY = frameY;
+				var headerWidth = frameWidth;
+				
+				// footer
+				var footerHeight = 30;
+				var footerX = frameX;
+				var footerY = frameHeight-footerHeight;
+				var footerWidth = frameWidth;
+				
+				// main screen
+				var mainScreenX = frameX;
+				var mainScreenY = headerY + headerHeight;
+				var mainScreenWidth = frameWidth;
+				var mainScreenHeight = footerY;
+				
+				// hour lines
+				var maxHourLine = 29;
+				var hourLabelY = mainScreenY + 10;
+				var hourLineY = mainScreenY + 15;
+				var hourLineHeight = mainScreenHeight - 5;
+				
+				// horizontal zoom
+				var maxStepBetweenHourLines = 200;
+				
 				// horizontal zoom
 				var zoomX = 1;
 				var zoomXElement = document.getElementById("zoomX");
 				zoomXElement.addEventListener("change", function (e) {
 						zoomX = e.target.value;
+						leftX = 0; // FIXME
 						drawScreen();
+					},false);
+				
+				// horizontal scrolling
+				var leftX = 0;
+				var scrollStep = 10;
+				var scrollLeftButton = document.getElementById("scrollLeft");
+				scrollLeftButton.addEventListener("click", function (e) {
+						if(leftX < 0) {
+							leftX += scrollStep;
+							drawScreen();
+						}
+					},false);
+				var scrollRightButton = document.getElementById("scrollRight");
+				scrollRightButton.addEventListener("click", function (e) {
+						if(leftX > mainScreenWidth-(mainScreenWidth*zoomX)) {
+							leftX -= scrollStep;
+							drawScreen();
+						}
 					},false);
 				
 				drawScreen();
 				
 				function drawScreen() {
 				
-					// base frame
-					var frameX = 1;
-					var frameY = 1;
-					var frameWidth = theCanvas.width-2;
-					var frameHeight = theCanvas.height-2;
 					
-					// header
-					var headerHeight = 30;
-					var headerX = frameX;
-					var headerY = frameY;
-					var headerWidth = frameWidth;
-					
-					// footer
-					var footerHeight = 30;
-					var footerX = frameX;
-					var footerY = frameHeight-footerHeight;
-					var footerWidth = frameWidth;
-					
-					// main screen
-					var mainScreenX = frameX;
-					var mainScreenY = headerY + headerHeight;
-					var mainScreenWidth = frameWidth;
-					var mainScreenHeight = footerY;
-					
-					// hour lines
-					var maxHourLine = 29;
-					var hourLabelY = mainScreenY + 10;
-					var hourLineY = mainScreenY + 15;
-					var hourLineHeight = mainScreenHeight - 5;
-					
-					// horizontal zoom
-					var maxStepBetweenHourLines = 200;
 					
 					cleanFrame();
 					
@@ -87,6 +108,8 @@
 						drawFrame();
 						drawHeader();
 						drawFooter();
+
+						context.translate(leftX,0);
 						
 						var hourLineXs = calculateHourLineXs();
 						for(var i=0; i<hourLineXs.length; i++) {
@@ -98,6 +121,7 @@
 					}
 					
 					function cleanFrame() {
+						context.setTransform(1,0,0,1,0,0);
 						context.clearRect(frameX,frameY,frameWidth,frameHeight);
 						context.strokeStyle = "black";
 						context.lineWidth = 1;
@@ -184,5 +208,7 @@
 			</canvas>
 		</div>
 		<input id="zoomX" type ="range" min="1" max="10" step="0.1" value="1" style="width: 400px" />
+		<input id="scrollLeft" type="button" value="<<" />
+		<input id="scrollRight" type="button" value=">>" />
 	</body>
 </html>
