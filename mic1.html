@@ -76,13 +76,18 @@
 				function updateHorizontalZoom(value) {
 					var oldZoomX = zoomX;
 					zoomX = value;
-					leftX = Math.floor(leftX * zoomX/oldZoomX);
+					leftX = (leftX/(mainScreenWidth*oldZoomX)) * (mainScreenWidth*zoomX);
+					if(leftX > 0) {
+						leftX = 0;
+					}else if(leftX < mainScreenWidth-(mainScreenWidth*zoomX)) {
+						leftX = mainScreenWidth-(mainScreenWidth*zoomX);
+					}
 					drawScreen();
 				}
 				
 				// horizontal scrolling
 				var leftX = 0;
-				var scrollStep = 20;
+				var scrollStep = 100;
 				var scrollLeftButton = document.getElementById("scrollLeft");
 				scrollLeftButton.addEventListener("click", scrollLeft, false);
 					
@@ -217,7 +222,7 @@
 			Your browser doesn't support HTML5 Canvas!
 			</canvas>
 		</div>
-		<input id="zoomX" type ="range" min="1" max="10" step="0.1" value="1" style="width: 400px" />
+		<input id="zoomX" type ="range" min="1" max="10" step=".1" value="1" style="width: 400px" />
 		<input id="scrollLeft" type="button" value="<<" />
 		<input id="scrollRight" type="button" value=">>" />
 	</body>
