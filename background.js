@@ -8,7 +8,7 @@ function background_initVars() {
 	maxHourLine = 29;
 	hourLabelY = mainScreenY + 10;
 	hourLineY = mainScreenY + 15;
-	hourLineHeight = mainScreenHeight - 5;
+	hourLineHeight = 800;
 	maxStepBetweenHourLines = 200;
 }
 
