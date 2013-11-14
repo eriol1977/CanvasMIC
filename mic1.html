@@ -70,28 +70,38 @@
 				var zoomX = 1;
 				var zoomXElement = document.getElementById("zoomX");
 				zoomXElement.addEventListener("change", function (e) {
-						zoomX = e.target.value;
-						leftX = 0; // FIXME
-						drawScreen();
+						updateHorizontalZoom(e.target.value);
 					},false);
+				
+				function updateHorizontalZoom(value) {
+					var oldZoomX = zoomX;
+					zoomX = value;
+					leftX = Math.floor(leftX * zoomX/oldZoomX);
+					drawScreen();
+				}
 				
 				// horizontal scrolling
 				var leftX = 0;
-				var scrollStep = 10;
+				var scrollStep = 20;
 				var scrollLeftButton = document.getElementById("scrollLeft");
-				scrollLeftButton.addEventListener("click", function (e) {
-						if(leftX < 0) {
-							leftX += scrollStep;
-							drawScreen();
-						}
-					},false);
+				scrollLeftButton.addEventListener("click", scrollLeft, false);
+					
+				function scrollLeft() {
+					if(leftX < 0) {
+						leftX += scrollStep;
+						drawScreen();
+					}
+				}
+					
 				var scrollRightButton = document.getElementById("scrollRight");
-				scrollRightButton.addEventListener("click", function (e) {
-						if(leftX > mainScreenWidth-(mainScreenWidth*zoomX)) {
-							leftX -= scrollStep;
-							drawScreen();
-						}
-					},false);
+				scrollRightButton.addEventListener("click", scrollRight, false);
+				
+				function scrollRight() {
+					if(leftX > mainScreenWidth-(mainScreenWidth*zoomX)) {
+						leftX -= scrollStep;
+						drawScreen();
+					}
+				}
 				
 				drawScreen();
 				
