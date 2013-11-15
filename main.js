@@ -47,11 +47,23 @@ function init() {
 	scrollLeftButton.addEventListener("click", scrollLeft, false);
 	var scrollRightButton = document.getElementById("scrollRight");
 	scrollRightButton.addEventListener("click", scrollRight, false);
+	
+	// vertical zoom
+	var zoomYElement = document.getElementById("zoomY");
+	zoomYElement.addEventListener("change", function (e) {
+			updateVerticalZoom(e.target.value);
+		},false);
+		
+	// vertical scrolling
+	var scrollUpButton = document.getElementById("scrollUp");
+	scrollUpButton.addEventListener("click", scrollUp, false);
+	var scrollDownButton = document.getElementById("scrollDown");
+	scrollDownButton.addEventListener("click", scrollDown, false);
 }
 
 function drawScreen() {
 	drawFrame();
-	context.translate(leftX,0);
+	context.translate(leftX,topY);
 	drawBackground();
 }
 

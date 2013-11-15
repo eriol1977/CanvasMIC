@@ -1,11 +1,15 @@
 var zoomX;
 var leftX
 var scrollStep;
+var zoomY;
+var topY;
 
 function zoom_and_scroll_initVars() {
 	zoomX = 1;
 	leftX = 0;
 	scrollStep = 100;
+	zoomY = 1;
+	topY = 0;
 }
 
 function updateHorizontalZoom(value) {
@@ -22,6 +26,11 @@ function updateHorizontalZoom(value) {
 	drawScreen();
 }
 
+function updateVerticalZoom(value) {
+	zoomY = value;
+	drawScreen();
+}
+
 function scrollLeft() {
 	if(leftX < 0) {
 		leftX += scrollStep;
@@ -32,6 +41,20 @@ function scrollLeft() {
 function scrollRight() {
 	if(leftX > mainScreenWidth-(mainScreenWidth*zoomX)) {
 		leftX -= scrollStep;
+		drawScreen();
+	}
+}
+
+function scrollUp() {
+	if(topY < 0) {
+		topY += scrollStep;
+		drawScreen();
+	}
+}
+
+function scrollDown() {
+	if(topY > mainScreenHeight-(mainScreenHeight*zoomY)) {
+		topY -= scrollStep;
 		drawScreen();
 	}
 }

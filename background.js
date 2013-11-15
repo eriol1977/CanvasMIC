@@ -20,6 +20,24 @@ function drawBackground() {
 			drawHourLine(hourLineXs[i]);
 		}
 	}
+	
+	// FIXME just to test vertical zoom and scroll
+	context.strokeStyle = "black";
+	context.lineWidth = .5;
+	context.setLineDash([10,3]);
+	var i = 1;
+	for(var y=60; y<=800; y+=20*zoomY) {
+		context.beginPath();
+		context.moveTo(20, y);
+		context.lineTo(theCanvas.width, y);
+		context.stroke();
+		context.closePath();
+		
+		context.font = "10px serif"
+		context.fillStyle = "black";
+		context.fillText (i, 5, y+3);
+		i++;
+	}
 }
 
 function drawHourLine(x) {
