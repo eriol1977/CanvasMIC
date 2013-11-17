@@ -27,7 +27,16 @@ function updateHorizontalZoom(value) {
 }
 
 function updateVerticalZoom(value) {
+	var oldZoomY = zoomY;
 	zoomY = value;
+	// new topY = (old topY / old height with zoom) * new height with zoom
+	topY = (topY/(mainScreenHeight*oldZoomY)) * (mainScreenHeight*zoomY);
+	// sets limits to topY
+	if(topY > 0) {
+		topY = 0;
+	}else if(topY < mainScreenHeight-(mainScreenHeight*zoomY)) {
+		topY = mainScreenHeight-(mainScreenHeight*zoomY);
+	}
 	drawScreen();
 }
 

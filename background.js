@@ -1,24 +1,18 @@
-var maxHourLine;
-var hourLabelY;
-var hourLineY;
-var hourLineHeight;
-var maxStepBetweenHourLines;
+var hourLabelYOffset; // vertical offset to draw the hour labels
+var hourLineYOffset; // vertical offset to start drawing the hour lines
+var zeroLineXOffset; // horizontal offset to draw the 00:00 line
 
 function background_initVars() {
-	maxHourLine = 29;
-	hourLabelY = mainScreenY + 10;
-	hourLineY = mainScreenY + 15;
-	hourLineHeight = 800;
-	maxStepBetweenHourLines = 200;
+	hourLabelYOffset = 10;
+	hourLineYOffset = 15;
+	zeroLineXOffset = 20;
 }
 
 function drawBackground() {
 	var hourLineXs = calculateHourLineXs();
 	for(var i=0; i<hourLineXs.length; i++) {
-		if(i < maxHourLine) {
-			drawHourLabel(hourLineXs[i],getHourLabel(i+1));
-			drawHourLine(hourLineXs[i]);
-		}
+		drawHourLabel(hourLineXs[i],getHourLabel(i));
+		drawHourLine(hourLineXs[i]);
 	}
 	
 	// FIXME just to test vertical zoom and scroll
@@ -26,10 +20,10 @@ function drawBackground() {
 	context.lineWidth = .5;
 	context.setLineDash([10,3]);
 	var i = 1;
-	for(var y=60; y<=800; y+=20*zoomY) {
+	for(var y=60.5; y<=mainScreenY + (mainScreenHeight*zoomY); y+=20*zoomY) {
 		context.beginPath();
 		context.moveTo(20, y);
-		context.lineTo(theCanvas.width, y);
+		context.lineTo(mainScreenWidth*zoomX, y);
 		context.stroke();
 		context.closePath();
 		
@@ -45,8 +39,8 @@ function drawHourLine(x) {
 	context.lineWidth = .5;
 	context.setLineDash([10,3]);
 	context.beginPath();
-	context.moveTo(x, hourLineY);
-	context.lineTo(x, hourLineHeight);
+	context.moveTo(x, mainScreenY + hourLineYOffset);
+	context.lineTo(x, mainScreenY + (mainScreenHeight*zoomY));
 	context.stroke();
 	context.closePath();
 }
@@ -56,27 +50,17 @@ function drawHourLabel(x,hour) {
 	context.fillStyle = "black";
 	var metrics = context.measureText(hour);
 	var textWidth = metrics.width;
-	context.fillText (hour, x-textWidth/2, hourLabelY);
+	context.fillText (hour, x-textWidth/2, mainScreenY + hourLabelYOffset);
 }
 
 function calculateHourLineXs() {
 	var hourLineXs = new Array();
-	
-	var i = 0;
 	var tempX;
-	var step = calculateHourLineStep(maxHourLine+1);
-	for(var x=step; x<(mainScreenWidth*zoomX); x+=step) {
-		tempX = Math.floor(x) + .5; //to avoid blurred lines
-		hourLineXs[i] = tempX;
-		i++;
+	for(var hour=0; hour<maxHours; hour++) {
+		tempX = convertMinutesToPixels(hour*60,(mainScreenWidth*zoomX)-zeroLineXOffset);
+		hourLineXs[hour] = zeroLineXOffset + Math.floor(tempX) + .5; //to avoid blurred lines
 	}
-	
 	return hourLineXs;
-}
-
-function calculateHourLineStep(numberOfSections) {
-	var step = (mainScreenWidth*zoomX)/numberOfSections;
-	return step;
 }
 
 function getHourLabel(hour) {

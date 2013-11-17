@@ -6,14 +6,18 @@ var mainScreenX;
 var mainScreenY;
 var mainScreenWidth;
 var mainScreenHeight;
+var headerHeight;
+var footerHeight;
 
 function frame_initVars() {
 	frameWidth = theCanvas.width-2;
 	frameHeight = theCanvas.height-2;
+	headerHeight = frameHeight * .05;
+	footerHeight = frameHeight * .05;
 	mainScreenX = 1;
-	mainScreenY = 40;
+	mainScreenY = headerHeight+10;
 	mainScreenWidth = frameWidth;
-	mainScreenHeight = 500; // TODO define sizes proportionally (%) to canvas size
+	mainScreenHeight = frameHeight * .85
 }
 
 function drawFrame() {
@@ -27,11 +31,11 @@ function drawFrame() {
 }
 
 function drawHeader() {
-	context.strokeRect(1,1,frameWidth,30);
+	context.strokeRect(1,1,frameWidth,headerHeight);
 }
 
 function drawFooter() {
-	context.strokeRect(1,mainScreenY + mainScreenHeight+10,frameWidth,30);
+	context.strokeRect(1,mainScreenY + mainScreenHeight+10,frameWidth,footerHeight);
 }
 
 function cleanFrame() {
