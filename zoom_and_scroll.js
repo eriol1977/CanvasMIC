@@ -1,4 +1,7 @@
 var zoomX;
+var minZoomXValue;
+var maxZoomXValue;
+var zoomXStep;
 var leftX
 var scrollStep;
 var zoomY;
@@ -6,6 +9,9 @@ var topY;
 
 function zoom_and_scroll_initVars() {
 	zoomX = 1;
+	minZoomXValue = 1;
+	maxZoomXValue = 10;
+	zoomXStep = .2;
 	leftX = 0;
 	scrollStep = 100;
 	zoomY = 1;
@@ -66,4 +72,20 @@ function scrollDown() {
 		topY -= scrollStep;
 		drawScreen();
 	}
+}
+
+function zoomInHorizontally() {
+	var newZoomXValue = zoomX + zoomXStep;
+	if(newZoomXValue > maxZoomXValue) {
+		newZoomXValue = maxZoomXValue;
+	}
+	updateHorizontalZoom(newZoomXValue);
+}
+
+function zoomOutHorizontally() {
+	var newZoomXValue = zoomX - zoomXStep;
+	if(newZoomXValue < minZoomXValue) {
+		newZoomXValue = minZoomXValue;
+	}
+	updateHorizontalZoom(newZoomXValue);
 }

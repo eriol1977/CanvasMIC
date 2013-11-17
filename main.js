@@ -36,18 +36,6 @@ function init() {
 	zoom_and_scroll_initVars();
 	background_initVars();
 	
-	// horizontal zoom
-	var zoomXElement = document.getElementById("zoomX");
-	zoomXElement.addEventListener("change", function (e) {
-			updateHorizontalZoom(e.target.value);
-		},false);
-	
-	// horizontal scrolling
-	var scrollLeftButton = document.getElementById("scrollLeft");
-	scrollLeftButton.addEventListener("click", scrollLeft, false);
-	var scrollRightButton = document.getElementById("scrollRight");
-	scrollRightButton.addEventListener("click", scrollRight, false);
-	
 	// vertical zoom
 	var zoomYElement = document.getElementById("zoomY");
 	zoomYElement.addEventListener("change", function (e) {
@@ -59,6 +47,26 @@ function init() {
 	scrollUpButton.addEventListener("click", scrollUp, false);
 	var scrollDownButton = document.getElementById("scrollDown");
 	scrollDownButton.addEventListener("click", scrollDown, false);
+	
+	// horizontal scrolling and zooming
+	$('#canvasOne').on('mousewheel', function(event) {
+		console.log(event.deltaX, event.deltaY, event.deltaFactor);
+		if(event.altKey) {
+			if(event.deltaY>0) {
+				zoomInHorizontally();
+			}else{
+				zoomOutHorizontally();
+			}
+		}else{
+			if(event.deltaY>0) {
+				scrollRight();
+			}else{
+				scrollLeft();
+			}
+		}
+		event.preventDefault();
+	});
+	
 }
 
 function drawScreen() {
