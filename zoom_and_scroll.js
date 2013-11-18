@@ -17,7 +17,7 @@ function zoom_and_scroll_initVars() {
 	maxZoomXValue = 10;
 	zoomXStep = .2;
 	leftX = 0;
-	scrollStep = 100;
+	scrollStep = 50;
 	zoomY = 1;
 	minZoomYValue = 1;
 	maxZoomYValue = 10;

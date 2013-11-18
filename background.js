@@ -9,27 +9,49 @@ function background_initVars() {
 }
 
 function drawBackground() {
+	
+	
+	
+	
+	
+
+	// draws the vertical lines
 	var hourLineXs = calculateHourLineXs();
 	for(var i=0; i<hourLineXs.length; i++) {
-		drawHourLabel(hourLineXs[i],getHourLabel(i));
 		drawHourLine(hourLineXs[i]);
 	}
-	
-	// FIXME just to test vertical zoom and scroll
+
+	// FIXME horizontal lines
 	context.strokeStyle = "black";
 	context.lineWidth = .5;
 	context.setLineDash([10,3]);
-	var i = 1;
 	for(var y=60.5; y<=mainScreenY + (mainScreenHeight*zoomY); y+=20*zoomY) {
 		context.beginPath();
 		context.moveTo(20, y);
 		context.lineTo(mainScreenWidth*zoomX, y);
 		context.stroke();
 		context.closePath();
-		
-		context.font = "10px serif"
-		context.fillStyle = "black";
-		context.fillText (i, 5, y+3);
+	}
+	
+	// draws the background for the hour labels
+	context.save();
+	context.setTransform(1,0,0,1,0,0);
+	context.fillStyle = "rgb(200,200,200)";
+	context.fillRect(mainScreenX,mainScreenY,mainScreenWidth*zoomX,hourLineYOffset);
+	context.fillRect(mainScreenX,mainScreenY,17,mainScreenHeight*zoomY);
+	context.restore();
+	
+	// draws the hour labels
+	for(var i=0; i<hourLineXs.length; i++) {
+		drawHourLabel(hourLineXs[i],getHourLabel(i));
+	}
+	
+	// FIXME number labels
+	var i = 1;
+	context.font = "10px serif"
+	context.fillStyle = "black";
+	for(var y=60.5; y<=mainScreenY + (mainScreenHeight*zoomY); y+=20*zoomY) {
+		context.fillText (i, 5-leftX, y+3);
 		i++;
 	}
 }
@@ -50,7 +72,7 @@ function drawHourLabel(x,hour) {
 	context.fillStyle = "black";
 	var metrics = context.measureText(hour);
 	var textWidth = metrics.width;
-	context.fillText (hour, x-textWidth/2, mainScreenY + hourLabelYOffset);
+	context.fillText (hour, x-textWidth/2, mainScreenY + hourLabelYOffset - topY);
 }
 
 function calculateHourLineXs() {
