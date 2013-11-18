@@ -12,12 +12,12 @@ var footerHeight;
 function frame_initVars() {
 	frameWidth = theCanvas.width-2;
 	frameHeight = theCanvas.height-2;
-	headerHeight = frameHeight * .05;
-	footerHeight = frameHeight * .05;
+	headerHeight = frameHeight * .03;
+	footerHeight = frameHeight * .03;
 	mainScreenX = 1;
 	mainScreenY = headerHeight+10;
 	mainScreenWidth = frameWidth;
-	mainScreenHeight = frameHeight * .85
+	mainScreenHeight = frameHeight * .9
 }
 
 function drawFrame() {

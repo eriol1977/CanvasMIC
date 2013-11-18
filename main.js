@@ -36,37 +36,72 @@ function init() {
 	zoom_and_scroll_initVars();
 	background_initVars();
 	
-	// vertical zoom
-	var zoomYElement = document.getElementById("zoomY");
-	zoomYElement.addEventListener("change", function (e) {
-			updateVerticalZoom(e.target.value);
-		},false);
-		
-	// vertical scrolling
-	var scrollUpButton = document.getElementById("scrollUp");
-	scrollUpButton.addEventListener("click", scrollUp, false);
-	var scrollDownButton = document.getElementById("scrollDown");
-	scrollDownButton.addEventListener("click", scrollDown, false);
-	
-	// horizontal scrolling and zooming
+	// scrolling and zooming
 	$('#canvasOne').on('mousewheel', function(event) {
 		console.log(event.deltaX, event.deltaY, event.deltaFactor);
 		if(event.altKey) {
-			if(event.deltaY>0) {
-				zoomInHorizontally();
+			if(isMousePointerOnAVerticalBorder(getMousePos(theCanvas,event).x)) {
+				if(event.deltaY>0) {
+					zoomInVertically();
+				}else{
+					zoomOutVertically();
+				}
 			}else{
-				zoomOutHorizontally();
+				if(event.deltaY>0) {
+					zoomInHorizontally();
+				}else{
+					zoomOutHorizontally();
+				}
 			}
 		}else{
-			if(event.deltaY>0) {
-				scrollRight();
+			if(isMousePointerOnAVerticalBorder(getMousePos(theCanvas,event).x)) {
+				if(event.deltaY>0) {
+					scrollUp();
+				}else{
+					scrollDown();
+				}
 			}else{
-				scrollLeft();
+				if(event.deltaY>0) {
+					scrollRight();
+				}else{
+					scrollLeft();
+				}
 			}
 		}
 		event.preventDefault();
 	});
+
+	var isDown = false;     //flag we use to keep track
+	var x1, y1, x2, y2;     //to store the coords
 	
+	// when mouse button is clicked and held    
+	$('#canvasOne').on('mousedown', function(e){
+		if (isDown === false) {
+			isDown = true;
+			var pos = getMousePos(theCanvas, e);
+			x1 = pos.x;
+			y1 = pos.y;
+		}
+	});
+
+	// when mouse button is released (note: window, not canvas here)
+	$(window).on('mouseup', function(e){
+		if (isDown === true) {
+			var pos = getMousePos(theCanvas, e);
+			x2 = pos.x;
+			y2 = pos.y;
+			isDown = false;
+		}
+	});
+
+	// get mouse pos relative to canvas
+	function getMousePos(canvas, evt) {
+		var rect = canvas.getBoundingClientRect();
+		return {
+			x: evt.clientX - rect.left,
+			y: evt.clientY - rect.top
+		};
+	}
 }
 
 function drawScreen() {

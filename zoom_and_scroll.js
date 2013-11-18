@@ -5,7 +5,11 @@ var zoomXStep;
 var leftX
 var scrollStep;
 var zoomY;
+var minZoomYValue;
+var maxZoomYValue;
+var zoomYStep;
 var topY;
+var verticalBorderAreaWidth;
 
 function zoom_and_scroll_initVars() {
 	zoomX = 1;
@@ -15,7 +19,11 @@ function zoom_and_scroll_initVars() {
 	leftX = 0;
 	scrollStep = 100;
 	zoomY = 1;
+	minZoomYValue = 1;
+	maxZoomYValue = 10;
+	zoomYStep = .2;
 	topY = 0;
+	verticalBorderAreaWidth = 50;
 }
 
 function updateHorizontalZoom(value) {
@@ -88,4 +96,25 @@ function zoomOutHorizontally() {
 		newZoomXValue = minZoomXValue;
 	}
 	updateHorizontalZoom(newZoomXValue);
+}
+
+function zoomInVertically() {
+	var newZoomYValue = zoomY + zoomYStep;
+	if(newZoomYValue > maxZoomYValue) {
+		newZoomYValue = maxZoomYValue;
+	}
+	updateVerticalZoom(newZoomYValue);
+}
+
+function zoomOutVertically() {
+	var newZoomYValue = zoomY - zoomYStep;
+	if(newZoomYValue < minZoomYValue) {
+		newZoomYValue = minZoomYValue;
+	}
+	updateVerticalZoom(newZoomYValue);
+}
+
+function isMousePointerOnAVerticalBorder(x) {
+	// returns true if the mouse pointer is positioned near one of the vertical borders of the canvas
+	return (x > 0 && x < verticalBorderAreaWidth) || (x > mainScreenX + mainScreenWidth - verticalBorderAreaWidth && x < mainScreenX + mainScreenWidth);
 }
