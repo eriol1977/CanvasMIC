@@ -1,11 +1,27 @@
 var hourLabelYOffset; // vertical offset to draw the hour labels
 var hourLineYOffset; // vertical offset to start drawing the hour lines
 var zeroLineXOffset; // horizontal offset to draw the 00:00 line
+var startY; // first available y
+var minVerticalSectionHeight;
 
 function background_initVars() {
 	hourLabelYOffset = 10;
 	hourLineYOffset = 15;
 	zeroLineXOffset = 20;
+	startY = mainScreenY + hourLineYOffset;
+	minVerticalSectionHeight = 10;
+}
+
+function getEndY() {
+	return mainScreenY + (mainScreenHeight*zoomY) + startY;
+}
+
+function getVerticalSectionHeight() {
+	return minVerticalSectionHeight*zoomY;
+}
+
+function getElementY(level) {
+	return (startY + level*getVerticalSectionHeight())-getVerticalSectionHeight()/2;
 }
 
 function drawBackground() {
@@ -13,14 +29,14 @@ function drawBackground() {
 	// horizontal lines
 	var i = 0;
 	var color;
-	for(var y=40.5; y<=mainScreenY + (mainScreenHeight*zoomY); y+=20*zoomY) {
+	for(var y=startY; y<=mainScreenY + (mainScreenHeight*zoomY); y+=getVerticalSectionHeight()) {
 		if(i % 2 == 1) {
 			color = "rgb(235,235,255)";
 		}else{
 			color = "white";
 		}
 		context.fillStyle = color;
-		context.fillRect(zeroLineXOffset,y,mainScreenWidth*zoomX,y+20*zoomY);
+		context.fillRect(zeroLineXOffset,y,mainScreenWidth*zoomX,y+getVerticalSectionHeight());
 		i++;
 	}
 
@@ -51,8 +67,8 @@ function drawBackground() {
 	var i = 1;
 	context.font = "10px serif"
 	context.fillStyle = "black";
-	for(var y=40.5; y<=mainScreenY + (mainScreenHeight*zoomY); y+=20*zoomY) {
-		context.fillText (i, 5-leftX, y + 10*zoomY + 3);
+	for(var y=startY; y<=mainScreenY + (mainScreenHeight*zoomY); y+=getVerticalSectionHeight()) {
+		context.fillText (i, 5-leftX, y + getVerticalSectionHeight()/2 + 3);
 		i++;
 	}
 }
@@ -66,8 +82,8 @@ function drawHourLine(x,fullHour) {
 		context.setLineDash([3,5]);
 	}
 	context.beginPath();
-	context.moveTo(x, mainScreenY + hourLineYOffset);
-	context.lineTo(x, mainScreenY + (mainScreenHeight*zoomY));
+	context.moveTo(x, startY);
+	context.lineTo(x, getEndY());
 	context.stroke();
 	context.closePath();
 }
@@ -97,8 +113,8 @@ function calculateHourLineXs() {
 }
 
 function calculateHourLineX(hour) {
-	var tempX = convertMinutesToPixels(hour*60,(mainScreenWidth*zoomX)-zeroLineXOffset);
-	return { x: zeroLineXOffset + Math.floor(tempX) + .5, //to avoid blurred lines
+	var tempX = convertMinutesToPixels(hour*60);
+	return { x: Math.floor(tempX) + .5, //to avoid blurred lines
 			 hourLabel: getHourLabel(hour),
 			 fullHour: (hour % 1) == 0
 			};
