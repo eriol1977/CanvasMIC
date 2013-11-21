@@ -24,6 +24,9 @@ function canvasApp() {
 	if(!theCanvas) {
 		return;
 	}
+	theCanvas.width = $(window).width() - 30;
+	theCanvas.height = $(window).height() - 10;
+	
 	context = theCanvas.getContext("2d");
 	
 	init();
@@ -94,6 +97,12 @@ function init() {
 		}
 	});
 
+	$('#canvasOne').click(function(e){
+		var mousePos = getMousePos(theCanvas, e);
+		addTrip(mousePos.x, mousePos.y);
+		drawScreen();
+	});
+	
 	// get mouse pos relative to canvas
 	function getMousePos(canvas, evt) {
 		var rect = canvas.getBoundingClientRect();
@@ -108,27 +117,12 @@ function drawScreen() {
 	drawFrame();
 	context.translate(leftX,topY);
 	drawBackground();
-	drawTrip(getMinutes("00:00"),getMinutes("01:00"),1,"red");
-	drawTrip(getMinutes("02:30"),getMinutes("01:12"),2,"blue");
-	drawTrip(getMinutes("04:45"),getMinutes("00:37"),4,"green");
-}
-
-function drawTrip(startTime, time, level, color) {
-	var startX = convertMinutesToPixels(startTime);
-	var endX = convertMinutesToPixels(startTime+time);
-	var lineWidth = getVerticalSectionHeight()/5;
-	if(lineWidth > 5) {
-		lineWidth = 5;
-	}
-	context.strokeStyle = color;
-	context.lineWidth = lineWidth;
-	context.setLineDash([0]);
-	context.lineCap = "round";
-	context.beginPath();
-	context.moveTo(startX+lineWidth/2,getElementY(level)); // lineWidth/2 is used to compensate the line cap width
-	context.lineTo(endX-lineWidth/2,getElementY(level));
-	context.stroke();
-	context.closePath();
+	
+	drawTripByMinutes(getMinutes("00:00"),getMinutes("01:00"),1,"red");
+	drawTripByMinutes(getMinutes("02:30"),getMinutes("01:12"),2,"blue");
+	drawTripByMinutes(getMinutes("04:45"),getMinutes("00:37"),4,"green");
+	
+	drawTrips(trips);
 }
 
 function canvasSupport() {

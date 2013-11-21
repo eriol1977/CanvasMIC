@@ -21,7 +21,14 @@ function getVerticalSectionHeight() {
 }
 
 function getElementY(level) {
-	return (startY + level*getVerticalSectionHeight())-getVerticalSectionHeight()/2;
+	return (startY + level*getVerticalSectionHeight())-getVerticalSectionHeight()/2; // FIXME + topY ??
+}
+
+/*
+* Returns the vertical level (section) corresponding to the informed y (in pixels)
+*/
+function getVerticalLevel(y) {
+	return Math.round((y - startY - topY + getVerticalSectionHeight()/2)/getVerticalSectionHeight());
 }
 
 function drawBackground() {
