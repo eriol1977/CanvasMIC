@@ -11,6 +11,8 @@ Debugger.log = function(message) {
 
 var theCanvas;
 var context;
+var idGenerator = new IdGenerator();
+var tripsModel = new TripsModel(idGenerator);
 
 function eventWindowLoaded() {
 	canvasApp();
@@ -38,6 +40,14 @@ function init() {
 	frame_initVars();
 	zoom_and_scroll_initVars();
 	background_initVars();
+	
+	// FIXME trip importation example
+	var trip1 = new Trip(idGenerator.getNextId(), getMinutes("00:00"),getMinutes("01:00"),1,"red");
+	var trip2 = new Trip(idGenerator.getNextId(), getMinutes("02:30"),getMinutes("01:12"),2,"blue");
+	var trip3 = new Trip(idGenerator.getNextId(), getMinutes("04:45"),getMinutes("00:37"),4,"green");
+	tripsModel.importTrip(trip1);
+	tripsModel.importTrip(trip2);
+	tripsModel.importTrip(trip3);
 	
 	// scrolling and zooming
 	$('#canvasOne').on('mousewheel', function(event) {
@@ -99,7 +109,7 @@ function init() {
 
 	$('#canvasOne').click(function(e){
 		var mousePos = getMousePos(theCanvas, e);
-		addTrip(mousePos.x, mousePos.y);
+		tripsModel.addTrip(mousePos.x, mousePos.y);
 		drawScreen();
 	});
 	
@@ -118,11 +128,7 @@ function drawScreen() {
 	context.translate(leftX,topY);
 	drawBackground();
 	
-	drawTripByMinutes(getMinutes("00:00"),getMinutes("01:00"),1,"red");
-	drawTripByMinutes(getMinutes("02:30"),getMinutes("01:12"),2,"blue");
-	drawTripByMinutes(getMinutes("04:45"),getMinutes("00:37"),4,"green");
-	
-	drawTrips(trips);
+	drawTrips(tripsModel);
 }
 
 function canvasSupport() {

@@ -1,8 +1,9 @@
-function drawTrips(trips) {
+function drawTrips(tripsModel) {
 	var trip;
+	var trips = tripsModel.getTrips();
 	for(var i=0; i<trips.length; i++) {
 		trip = trips[i];
-		drawTripByMinutes(trip.t1, trip.t2, trip.lvl, trip.col);
+		drawTripByMinutes(trip.getStartTime(), trip.getTime(), trip.getLevel(), trip.getColor());
 	}
 }
 
