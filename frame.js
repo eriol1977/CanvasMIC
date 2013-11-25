@@ -12,18 +12,20 @@ var footerHeight;
 function frame_initVars() {
 	frameWidth = theCanvas.width-2;
 	frameHeight = theCanvas.height-2;
-	headerHeight = frameHeight * .03;
-	footerHeight = frameHeight * .03;
+	//headerHeight = frameHeight * .03;
+	headerHeight = 0;
+	//footerHeight = frameHeight * .03;
+	footerHeight = 0;
 	mainScreenX = 1;
 	mainScreenY = headerHeight+10;
 	mainScreenWidth = frameWidth;
-	mainScreenHeight = frameHeight * .9
+	mainScreenHeight = frameHeight * .93
 }
 
 function drawFrame() {
 	cleanFrame();
-	drawHeader();
-	drawFooter();
+	//drawHeader();
+	//drawFooter();
 	context.beginPath();
 	context.rect(mainScreenX,mainScreenY,mainScreenWidth,mainScreenHeight);
 	context.stroke();

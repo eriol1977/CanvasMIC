@@ -6,12 +6,27 @@ function convertMinutesToPixels(minutes) {
 }
 
 function convertPixelsToMinutes(pixels) {
-	return (pixels - zeroLineXOffset - leftX) * (maxMinutes/getScreenWidth());
+	return Math.round((pixels - zeroLineXOffset - leftX) * (maxMinutes/getScreenWidth()));
 }
 
 function getMinutes(hourString) {
 	var hourAndMinutes = hourString.split(':');
 	return parseInt(hourAndMinutes[0])*60 + parseInt(hourAndMinutes[1]);
+}
+
+function getHourString(minutes) {
+	var hours = Math.floor(minutes / 60);
+	var minutes = minutes % 60;
+	var hourString = "";
+	if(hours < 10) {
+		hourString += "0";
+	}
+	hourString = hourString + hours + ":";
+	if(minutes < 10) {
+		hourString += "0";
+	}
+	hourString += minutes;
+	return hourString;	
 }
 
 function getScreenWidth() {

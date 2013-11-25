@@ -11,6 +11,8 @@ function drawTripByMinutes(startTime, time, level, color) {
 	var startX = convertMinutesToPixels(startTime);
 	var endX = convertMinutesToPixels(startTime+time);
 	drawTrip(startX, endX, level, color);
+	drawMinutesLabel(startTime, startX, level, true);
+	drawMinutesLabel(startTime+time, endX, level, false);
 }
 
 function drawTrip(startX, endX, level, color) {
@@ -27,4 +29,17 @@ function drawTrip(startX, endX, level, color) {
 	context.lineTo(endX-lineWidth/2,getElementY(level));
 	context.stroke();
 	context.closePath();
+}
+
+function drawMinutesLabel(time, x, level, start) {
+	context.font = "9px serif"
+	context.fillStyle = "black";
+	var minutesString = getHourString(time).split(':')[1];
+	var labelX = x;
+	if(!start) {
+		var metrics = context.measureText(minutesString);
+		var textWidth = metrics.width;
+		labelX -= textWidth;
+	}
+	context.fillText (minutesString, labelX, getElementY(level)-3);
 }

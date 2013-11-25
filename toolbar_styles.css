@@ -1,0 +1,48 @@
+.transparent{
+	opacity: 0.6;
+}
+ul.toolbar{
+	width:100px;
+	height:16px;
+	margin:0px;
+	padding:0px;
+	background-color:#fff;
+	/*border-bottom:1px solid black;*/
+	list-style-type:none;				
+}
+ul.toolbar li{
+	display:inline;                            
+}
+ul.toolbar li a, .navigation a{ 
+	float:left;
+	cursor:pointer;
+	width:24px;
+	height:16px;
+	opacity: 0.6;
+}		
+ul.toolbar li a:hover, .navigation a:hover{                
+	opacity: 1.0;
+}
+a.config{
+	background:#fff url('icons/config.png') no-repeat center center;
+}
+a.print{
+	background:#fff url('icons/print.png') no-repeat center center;
+}
+a.open{
+	background:#fff url('icons/open.png') no-repeat center center;
+}
+input[type="file"]#open_file {
+  /* Note: display:none on the input won't trigger the click event in WebKit.
+     Setting visibility to hidden and width 0 works.*/
+  visibility: hidden;
+  width: 0;
+  height: 0;
+}
+a.save{
+	background:#fff url('icons/save.png') no-repeat center center;
+}
+#open_toolbar_icon{
+	padding-top:5px;
+	cursor:pointer;
+}

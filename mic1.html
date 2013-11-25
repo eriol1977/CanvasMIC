@@ -2,6 +2,8 @@
 	<head>
 		<meta charset="UTF-8">
 		<title>MIC</title>
+		<link rel="stylesheet" type="text/css" href="main_styles.css" />
+		<link rel="stylesheet" type="text/css" href="toolbar_styles.css" />
 		<script src="modernizr.js"></script>
 		<script src="jquery-1.10.2.js"></script>
 		<script src="jquery.mousewheel.js"></script>
@@ -9,12 +11,27 @@
 		<script src="frame.js"></script>
 		<script src="minutes_converter.js"></script>
 		<script src="background.js"></script>
+		<script src="exception.js"></script>
 		<script src="id_generator.js"></script>
 		<script src="trips_model.js"></script>
 		<script src="trips_renderer.js"></script>
+		<script src="toolbar.js"></script>
+		<script src="import_export.js"></script>
 		<script src="main.js"></script>	
 	</head>
 	<body>
+		<div id="toolbar" style="display: block">
+			<ul class="toolbar transparent" id="tlbar">
+				<li><a id="config" class="config"></a></li>
+				<li><a id="print" class="print"></a></li>
+				<li><a id="open" class="open"></a><input type="file" id="open_file"></li>
+				<li><a id="save" class="save"></a></li>
+			</ul>
+		</div>
+		<!-- FIXME uncomment this and set "display: none" into the "toolbar" div to activate hiding toolbar panel -->
+		<!--div id="open_toolbar">
+			<image id="open_toolbar_icon" src="icons/down.png" />
+		</div-->
 		<div>
 			<canvas id="canvasOne" width="1300" height="600">
 			Your browser doesn't support HTML5 Canvas!

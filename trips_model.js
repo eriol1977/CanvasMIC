@@ -12,7 +12,7 @@ function TripsModel(idGen) {
 	* public methods
 	*/
 	
-	// creates and adds a trip based on the informed x,y coordinates
+	// creates and adds a trip, based on the informed x,y coordinates
 	this.addTrip = function(x,y) {
 		var startTime = convertPixelsToMinutes(x);
 		var time = getMinutes("01:00");
@@ -20,6 +20,14 @@ function TripsModel(idGen) {
 		var color = "blue";
 		addTripByMinutes(startTime, time, level, color);
 	};
+	
+	// finds and removes a trip from the model, based on the informed x,y coordinates
+	this.removeTrip = function(x,y) {
+		var trip = findTrip(x,y);
+		if(trip) {
+			removeTripFromInternalStructs(trip);
+		}
+	}
 	
 	// imports an already existing trip into the model
 	this.importTrip = function(trip) {
@@ -43,24 +51,88 @@ function TripsModel(idGen) {
 
 	// adds the trip to the internal structs of the model
 	function addTripToInternalStructs(trip) {
-		trips.push(trip);
 		addTripToLevel(trip);
+		trips.push(trip);
 	}
 	
 	// adds the informed trip to the tripsByLevel map
 	function addTripToLevel(trip) {
-		var t = tripsByLevel[trip.getLevel()];
-		if(!t) {
-			t = new Array();
+		var levelTrips = tripsByLevel[trip.getLevel()];
+		if(!levelTrips) {
+			levelTrips = new Array();
 		}
-		for(var i=0;i<t.length;i++) {
-			if(t[i].getStartTime() > trip.getStartTime()) {
+		for(var i=0;i<levelTrips.length;i++) {
+			if(levelTrips[i].getStartTime() > trip.getStartTime()) {
 				break;
 			}
 		}
-		t[i] = trip;
-		tripsByLevel[trip.getLevel()] = t;
+		validateTripPosition(trip, levelTrips, i);
+		levelTrips.splice(i,0,trip);
+		tripsByLevel[trip.getLevel()] = levelTrips;
 	};
+	
+	// removes the trip from the internal structs of the model
+	function removeTripFromInternalStructs(trip) {
+		var levelTrips = tripsByLevel[trip.getLevel()];
+		var index = indexOf(levelTrips,trip);
+		levelTrips.splice(index,1);
+		index = indexOf(trips,trip);
+		trips.splice(index,1);
+	}
+	
+	function validateTripPosition(trip, levelTrips, index) {
+		// checks previous trip
+		if(index > 0) {
+			var previousTrip = levelTrips[index-1];
+			if(previousTrip.getEndTime() > trip.getStartTime()) {
+				throw new MICException("Há uma sobreposição de tempo no trilho " + trip.getLevel()
+										+ " entre a viagem que termina às " + getHourString(previousTrip.getEndTime())
+										+ " e a nova, que começaria às " + getHourString(trip.getStartTime()));
+			}
+		}
+		// checks next trip
+		if(index < levelTrips.length) {
+			var nextTrip = levelTrips[index]; // we haven't inserted the new trip yet, so we use the same index to check
+			if(nextTrip.getStartTime() < trip.getEndTime()) {
+				throw new MICException("Há uma sobreposição de tempo no trilho " + trip.getLevel()
+										+" entre a nova viagem, que terminaria às " + getHourString(trip.getEndTime())
+										+", e aquela que começa às " + getHourString(nextTrip.getStartTime()));
+			}
+		}
+	}
+	
+	/**
+	* returns the trip corresponding to x,y coords, or undefined
+	*/
+	function findTrip(x,y) {
+		var level = getVerticalLevel(y);
+		var levelTrips = tripsByLevel[level];
+		if(levelTrips && levelTrips.length > 0) {
+			var trip;
+			var time = convertPixelsToMinutes(x);
+			for(var i=0; i<levelTrips.length; i++) {
+				trip = levelTrips[i];
+				if(trip.getStartTime()<=time && trip.getEndTime()>=time) {
+					return trip;
+				}
+			}
+		}
+		return undefined;
+	}
+	
+	/**
+	* Custom indexOfFunction to return object index based on its id value.
+	* Obs: for this function to work, both the object and the objects inside the array must
+	* expose a getId() method
+	*/
+	function indexOf(arr,objectWithId) {
+		for (var i = 0; i < arr.length; i++) {
+			if (arr[i].getId() == objectWithId.getId()) {
+				return i;
+			}
+		}
+		return -1;
+	}
 }
 
 function Trip(id, startTime, time, level, color) {
@@ -80,6 +152,10 @@ function Trip(id, startTime, time, level, color) {
 	
 	this.getTime = function() {
 		return time;
+	}
+	
+	this.getEndTime = function() {
+		return startTime + time;
 	}
 	
 	this.getLevel = function() {

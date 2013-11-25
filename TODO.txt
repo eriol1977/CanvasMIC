@@ -1,0 +1,5 @@
+- ogni tanto, alle 30:00, viene disegnato un pezzo supplementare che non dovrebbe esserci
+- evitare che i viaggi si sovrappongano ai numeri laterali e alle ore dello sfondo
+- non accettare click fuori dalla griglia
+- F5 non dovrebbe svuotare il canvas... si potrebbero mantenere i dati in sessione
+- alcune configurazioni base (e magari anche i registri di itinerario, ecc) si potrebbero salvare

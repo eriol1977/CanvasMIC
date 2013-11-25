@@ -1,4 +1,8 @@
 window.addEventListener("load", eventWindowLoaded, false);
+
+window.onerror = function (msg, url, line) {
+   alert("Message : " + msg );
+}
 			
 var Debugger = function() {};
 Debugger.log = function(message) {
@@ -107,10 +111,25 @@ function init() {
 		}
 	});
 
+	// left click adds a trip
 	$('#canvasOne').click(function(e){
+		try {
+			var mousePos = getMousePos(theCanvas, e);
+			tripsModel.addTrip(mousePos.x, mousePos.y);
+			drawScreen();
+		}catch(e){
+			if(e instanceof MICException) {
+				alert(e);
+			}
+		}
+	});
+
+	// avoids automatic context menu opening on right click, while removing a trip
+	$(this).bind("contextmenu", function(e) {
 		var mousePos = getMousePos(theCanvas, e);
-		tripsModel.addTrip(mousePos.x, mousePos.y);
+		tripsModel.removeTrip(mousePos.x, mousePos.y);
 		drawScreen();
+		e.preventDefault();
 	});
 	
 	// get mouse pos relative to canvas
