@@ -17,6 +17,8 @@ var theCanvas;
 var context;
 var idGenerator = new IdGenerator();
 var tripsModel = new TripsModel(idGenerator);
+var importer = new Importer(tripsModel);
+var exporter = new Exporter(tripsModel);
 
 function eventWindowLoaded() {
 	canvasApp();
@@ -46,12 +48,12 @@ function init() {
 	background_initVars();
 	
 	// FIXME trip importation example
-	var trip1 = new Trip(idGenerator.getNextId(), getMinutes("00:00"),getMinutes("01:00"),1,"red");
-	var trip2 = new Trip(idGenerator.getNextId(), getMinutes("02:30"),getMinutes("01:12"),2,"blue");
-	var trip3 = new Trip(idGenerator.getNextId(), getMinutes("04:45"),getMinutes("00:37"),4,"green");
-	tripsModel.importTrip(trip1);
-	tripsModel.importTrip(trip2);
-	tripsModel.importTrip(trip3);
+	// var trip1 = new Trip(idGenerator.getNextId(), getMinutes("00:00"),getMinutes("01:00"),1,"red");
+	// var trip2 = new Trip(idGenerator.getNextId(), getMinutes("02:30"),getMinutes("01:12"),2,"blue");
+	// var trip3 = new Trip(idGenerator.getNextId(), getMinutes("04:45"),getMinutes("00:37"),4,"green");
+	// tripsModel.importTrip(trip1);
+	// tripsModel.importTrip(trip2);
+	// tripsModel.importTrip(trip3);
 	
 	// scrolling and zooming
 	$('#canvasOne').on('mousewheel', function(event) {
@@ -130,6 +132,23 @@ function init() {
 		tripsModel.removeTrip(mousePos.x, mousePos.y);
 		drawScreen();
 		e.preventDefault();
+	});
+	
+	// imports trip data
+	$("#open_file").change(function(e){
+		var files = e.target.files;
+		if(files) {
+			importer.importFile(files[0]);
+		}
+		$("#open_file").val(null); // without this, event "change" is captured only once
+	});
+	
+	// shows hh:mm tooltip while moving the mouse with ctrl pressed
+	$('#canvasOne').on('mousemove', function(e){
+		if (e.ctrlKey) {
+			var pos = getMousePos(theCanvas, e);
+			console.log(getHourString(convertPixelsToMinutes(pos.x)));
+		}
 	});
 	
 	// get mouse pos relative to canvas

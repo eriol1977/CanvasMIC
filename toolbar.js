@@ -20,7 +20,7 @@ $(document).ready(function(){
 	$("#open_file").click(); // opens hidden input file field
   });
   $("#save").click(function(){
-	alert("save");
+	exporter.exportToFile();
   });
 });
 

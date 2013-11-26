@@ -86,8 +86,8 @@ function TripsModel(idGen) {
 			var previousTrip = levelTrips[index-1];
 			if(previousTrip.getEndTime() > trip.getStartTime()) {
 				throw new MICException("Há uma sobreposição de tempo no trilho " + trip.getLevel()
-										+ " entre a viagem que termina às " + getHourString(previousTrip.getEndTime())
-										+ " e a nova, que começaria às " + getHourString(trip.getStartTime()));
+										+ " entre a viagem das " + getHourString(previousTrip.getStartTime())
+										+ " e a nova, que começaria às " + getHourString(trip.getStartTime()) + ".");
 			}
 		}
 		// checks next trip
@@ -95,8 +95,8 @@ function TripsModel(idGen) {
 			var nextTrip = levelTrips[index]; // we haven't inserted the new trip yet, so we use the same index to check
 			if(nextTrip.getStartTime() < trip.getEndTime()) {
 				throw new MICException("Há uma sobreposição de tempo no trilho " + trip.getLevel()
-										+" entre a nova viagem, que terminaria às " + getHourString(trip.getEndTime())
-										+", e aquela que começa às " + getHourString(nextTrip.getStartTime()));
+										+ " entre a viagem das " + getHourString(nextTrip.getStartTime())
+										+ " e a nova, que começaria às " + getHourString(trip.getStartTime()) + ".");
 			}
 		}
 	}
@@ -164,5 +164,9 @@ function Trip(id, startTime, time, level, color) {
 	
 	this.getColor = function() {
 		return color;
+	}
+	
+	this.toString = function() {
+		return "{" + id + "} " + getHourString(startTime) + " - " + getHourString(this.getEndTime()) + " lvl " + level;
 	}
 }
