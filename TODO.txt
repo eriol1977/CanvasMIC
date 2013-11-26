@@ -1,8 +1,4 @@
 - ogni tanto, alle 30:00, viene disegnato un pezzo supplementare che non dovrebbe esserci
-- evitare che i viaggi si sovrappongano ai numeri laterali e alle ore dello sfondo
-- non accettare click fuori dalla griglia
 - F5 non dovrebbe svuotare il canvas... si potrebbero mantenere i dati in sessione
 - alcune configurazioni base (e magari anche i registri di itinerario, ecc) si potrebbero salvare
-- mostrare tooltip con l'orario, se tengo premuto ctrl e muovo il mouse
-- il primo livello dovrebbe cominciare un po' più in giù
 - id replicati quando si fa un'importazione... pulire il modello prima dell'importazione, o trovare un modo più elegante?

@@ -116,8 +116,10 @@ function init() {
 	$('#canvasOne').click(function(e){
 		try {
 			var mousePos = getMousePos(theCanvas, e);
-			tripsModel.addTrip(mousePos.x, mousePos.y);
-			drawScreen();
+			if(isInsideMainScreen(mousePos.x, mousePos.y)) {
+				tripsModel.addTrip(mousePos.x, mousePos.y);
+				drawScreen();
+			}
 		}catch(e){
 			if(e instanceof MICException) {
 				alert(e);
@@ -128,8 +130,10 @@ function init() {
 	// avoids automatic context menu opening on right click, while removing a trip
 	$(this).bind("contextmenu", function(e) {
 		var mousePos = getMousePos(theCanvas, e);
-		tripsModel.removeTrip(mousePos.x, mousePos.y);
-		drawScreen();
+		if(isInsideMainScreen(mousePos.x, mousePos.y)) {
+			tripsModel.removeTrip(mousePos.x, mousePos.y);
+			drawScreen();
+		}
 		e.preventDefault();
 	});
 	
@@ -146,20 +150,23 @@ function init() {
 	// FIXME is there a better way? this redraws the canvas a lot!
 	var showingTooltip = false;
 	$('#canvasOne').on('mousemove', function(e){
-		if (e.ctrlKey) {
-			showingTooltip = true;
-			var pos = getMousePos(theCanvas, e);
-			var minutes = convertPixelsToMinutes(pos.x);
-			var text = getHourString(minutes);
-			
-			context.font = "10px serif"
-			context.fillStyle = "black";
-			drawScreen();
-			context.fillText(text,convertMinutesToPixels(minutes),pos.y);
-		}else{
-			if(showingTooltip) {
+		var pos = getMousePos(theCanvas, e);
+		if(isInsideMainScreen(pos.x, pos.y)) {
+			if (e.ctrlKey) {
+				showingTooltip = true;
+				
+				var minutes = convertPixelsToMinutes(pos.x);
+				var text = getHourString(minutes);
+				
+				context.font = "10px serif"
+				context.fillStyle = "black";
 				drawScreen();
-				showingTooltip = false;
+				context.fillText(text,convertMinutesToPixels(minutes),pos.y);
+			}else{
+				if(showingTooltip) {
+					drawScreen();
+					showingTooltip = false;
+				}
 			}
 		}
 	});
@@ -171,6 +178,12 @@ function init() {
 			x: evt.clientX - rect.left,
 			y: evt.clientY - rect.top
 		};
+	}
+	
+	// checks if the coords are inside the main screen area, labels excluded
+	function isInsideMainScreen(x,y) {
+		return x >= zeroLineXOffset && x <= (zeroLineXOffset + mainScreenWidth)
+				&& y >= startY && y <= (startY + mainScreenHeight);
 	}
 }
 

@@ -6,10 +6,10 @@ var minVerticalSectionHeight;
 
 function background_initVars() {
 	hourLabelYOffset = 10;
-	hourLineYOffset = 15;
+	hourLineYOffset = 20;
 	zeroLineXOffset = 20;
 	startY = mainScreenY + hourLineYOffset;
-	minVerticalSectionHeight = 10;
+	minVerticalSectionHeight = 13;
 }
 
 function getEndY() {
@@ -70,12 +70,16 @@ function drawBackground() {
 		drawHourLabel(hourLineXs[i].x, hourLineXs[i].hourLabel);
 	}
 	
-	// FIXME number labels
+	// number labels
 	var i = 1;
 	context.font = "10px serif"
 	context.fillStyle = "black";
+	var drawY;
 	for(var y=startY; y<=mainScreenY + (mainScreenHeight*zoomY); y+=getVerticalSectionHeight()) {
-		context.fillText (i, 5-leftX, y + getVerticalSectionHeight()/2 + 3);
+		drawY = y + getVerticalSectionHeight()/2;
+		if(drawY >= (startY-topY)) { // label is not too high
+			context.fillText (i, 5-leftX, drawY + 3);
+		}
 		i++;
 	}
 }

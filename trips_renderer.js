@@ -10,8 +10,22 @@ function drawTrips(tripsModel) {
 function drawTripByMinutes(startTime, time, level, color) {
 	var startX = convertMinutesToPixels(startTime);
 	var endX = convertMinutesToPixels(startTime+time);
+	var y = getElementY(level);
+	
+	if(endX < (zeroLineXOffset-leftX) || y < (startY-topY)) { // the trip is outside the main screen
+		return;
+	}
+	
+	var drawLeftLabel = true;
+	if(startX < zeroLineXOffset-leftX) {
+		startX = zeroLineXOffset-leftX; // avoids painting trips above the left labels
+		drawLeftLabel = false; // the left label (startTime) is outside the main screen
+	}
+	
 	drawTrip(startX, endX, level, color);
-	drawMinutesLabel(startTime, startX, level, true);
+	if(drawLeftLabel) {
+		drawMinutesLabel(startTime, startX, level, true);
+	}
 	drawMinutesLabel(startTime+time, endX, level, false);
 }
 
