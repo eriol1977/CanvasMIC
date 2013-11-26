@@ -57,7 +57,6 @@ function init() {
 	
 	// scrolling and zooming
 	$('#canvasOne').on('mousewheel', function(event) {
-		console.log(event.deltaX, event.deltaY, event.deltaFactor);
 		if(event.altKey) {
 			if(isMousePointerOnAVerticalBorder(getMousePos(theCanvas,event).x)) {
 				if(event.deltaY>0) {
@@ -144,10 +143,24 @@ function init() {
 	});
 	
 	// shows hh:mm tooltip while moving the mouse with ctrl pressed
+	// FIXME is there a better way? this redraws the canvas a lot!
+	var showingTooltip = false;
 	$('#canvasOne').on('mousemove', function(e){
 		if (e.ctrlKey) {
+			showingTooltip = true;
 			var pos = getMousePos(theCanvas, e);
-			console.log(getHourString(convertPixelsToMinutes(pos.x)));
+			var minutes = convertPixelsToMinutes(pos.x);
+			var text = getHourString(minutes);
+			
+			context.font = "10px serif"
+			context.fillStyle = "black";
+			drawScreen();
+			context.fillText(text,convertMinutesToPixels(minutes),pos.y);
+		}else{
+			if(showingTooltip) {
+				drawScreen();
+				showingTooltip = false;
+			}
 		}
 	});
 	
