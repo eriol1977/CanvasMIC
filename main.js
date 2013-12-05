@@ -89,45 +89,44 @@ function init() {
 		event.preventDefault();
 	});
 
-	var isDown = false;     //flag we use to keep track
-	var x1, y1, x2, y2;     //to store the coords
-	
-	// when mouse button is clicked and held    
+	// drags trip when mouse button is clicked and held (without CTRL)
+	var tripSelected;
 	$('#canvasOne').on('mousedown', function(e){
-		if (isDown === false) {
-			isDown = true;
-			var pos = getMousePos(theCanvas, e);
-			x1 = pos.x;
-			y1 = pos.y;
+	    e.preventDefault();
+		if (e.ctrlKey) {
+			return;
 		}
+		var pos = getMousePos(theCanvas, e);
+		tripSelected = tripsModel.selectTrip(pos.x,pos.y);
 	});
 
-	// when mouse button is released (note: window, not canvas here)
-	$(window).on('mouseup', function(e){
-		if (isDown === true) {
-			var pos = getMousePos(theCanvas, e);
-			x2 = pos.x;
-			y2 = pos.y;
-			isDown = false;
-		}
+	// sets trip into place (with validation) when mouse button is released
+	$('#canvasOne').on('mouseup', function(e){
+		e.preventDefault();
+		var pos = getMousePos(theCanvas, e);
+		tripsModel.dragTrip(tripSelected,pos.x,pos.y,true);
+		tripSelected = null;
+		drawScreen();
 	});
 
-	// left click adds a trip
+	// left click + CTRL adds a trip
 	$('#canvasOne').click(function(e){
-		try {
-			var mousePos = getMousePos(theCanvas, e);
-			if(isInsideMainScreen(mousePos.x, mousePos.y)) {
-				tripsModel.addTrip(mousePos.x, mousePos.y);
-				drawScreen();
-			}
-		}catch(e){
-			if(e instanceof MICException) {
-				alert(e);
+		if (e.ctrlKey) {
+			try {
+				var mousePos = getMousePos(theCanvas, e);
+				if(isInsideMainScreen(mousePos.x, mousePos.y)) {
+					tripsModel.addTrip(mousePos.x, mousePos.y);
+					drawScreen();
+				}
+			}catch(e){
+				if(e instanceof MICException) {
+					alert(e);
+				}
 			}
 		}
 	});
 
-	// avoids automatic context menu opening on right click, while removing a trip
+	// right click removes a trip (while avoiding automatic context menu opening)
 	$(this).bind("contextmenu", function(e) {
 		var mousePos = getMousePos(theCanvas, e);
 		if(isInsideMainScreen(mousePos.x, mousePos.y)) {
@@ -152,20 +151,25 @@ function init() {
 	$('#canvasOne').on('mousemove', function(e){
 		var pos = getMousePos(theCanvas, e);
 		if(isInsideMainScreen(pos.x, pos.y)) {
-			if (e.ctrlKey) {
-				showingTooltip = true;
-				
-				var minutes = convertPixelsToMinutes(pos.x);
-				var text = getHourString(minutes);
-				
-				context.font = "10px serif"
-				context.fillStyle = "black";
+			if(tripSelected) {
+				tripsModel.dragTrip(tripSelected,pos.x,pos.y,false);
 				drawScreen();
-				context.fillText(text,convertMinutesToPixels(minutes),pos.y);
 			}else{
-				if(showingTooltip) {
+				if (e.ctrlKey) {
+					showingTooltip = true;
+					
+					var minutes = convertPixelsToMinutes(pos.x);
+					var text = getHourString(minutes);
+					
+					context.font = "10px serif"
+					context.fillStyle = "black";
 					drawScreen();
-					showingTooltip = false;
+					context.fillText(text,convertMinutesToPixels(minutes),pos.y);
+				}else{
+					if(showingTooltip) {
+						drawScreen();
+						showingTooltip = false;
+					}
 				}
 			}
 		}

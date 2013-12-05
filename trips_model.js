@@ -7,6 +7,7 @@ function TripsModel(idGen) {
 	var idGenerator = idGen;
 	var trips = new Array(); // all the trips, unordered
 	var tripsByLevel = new Array(); // trips in every vertical section, ordered by start time
+	var tempTrip = null; // used to temporary store trip values (must be nulled again after each use!)
 	
 	/**
 	* public methods
@@ -37,6 +38,39 @@ function TripsModel(idGen) {
 	// returns all the trips, unordered
 	this.getTrips = function() {
 		return trips;
+	};
+	
+	// selects a trip based on x,y screen coords
+	this.selectTrip = function(x,y) {
+		return findTrip(x,y);
+	};
+	
+	// updates the start time and vertical level of the informed trip, based on new x,y screen coords
+	// "validate" must be true when we want to render the change permanent
+	this.dragTrip = function(trip,x,y,validate) {
+		if(trip) {
+			// saves the trip values into a clone the first time
+			if(tempTrip == null) {
+				tempTrip = new Trip(trip.getId(),trip.getStartTime(),trip.getTime(),trip.getLevel(),trip.getColor());
+				removeTripFromLevel(trip); // the trip is removed from its original vertical level
+				trip.setSelected(true);
+			}
+			// updates start time and vertical level
+			trip.setStartTime(convertPixelsToMinutes(x));
+			trip.setLevel(getVerticalLevel(y));
+			// this is called when a validation is requested (for example, when we stop dragging a trip around the screen)
+			if(validate) {
+				try {
+					addTripToLevel(trip); // tries to insert the trip into its new vertical level
+				}catch(e){
+					// if it fails, the trip goes back to its original values and level
+					tempTrip.cloneInto(trip);
+					addTripToLevel(trip);
+				}
+				trip.setSelected(false);
+				tempTrip = null;
+			}
+		}
 	};
 	
 	/**
@@ -73,11 +107,16 @@ function TripsModel(idGen) {
 	
 	// removes the trip from the internal structs of the model
 	function removeTripFromInternalStructs(trip) {
+		removeTripFromLevel(trip)
+		index = indexOf(trips,trip);
+		trips.splice(index,1);
+	}
+	
+	// removes the trip from the tripsByLevel map
+	function removeTripFromLevel(trip) {
 		var levelTrips = tripsByLevel[trip.getLevel()];
 		var index = indexOf(levelTrips,trip);
 		levelTrips.splice(index,1);
-		index = indexOf(trips,trip);
-		trips.splice(index,1);
 	}
 	
 	function validateTripPosition(trip, levelTrips, index) {
@@ -141,6 +180,7 @@ function Trip(id, startTime, time, level, color) {
 	var time = time;
 	var level = level;
 	var color = color;
+	var selected = false;
 	
 	this.getId = function() {
 		return id;
@@ -164,6 +204,43 @@ function Trip(id, startTime, time, level, color) {
 	
 	this.getColor = function() {
 		return color;
+	}
+	
+	this.isSelected = function() {
+		return selected;
+	}
+	
+	this.setId = function(value) {
+		id = value;
+	}
+	
+	this.setStartTime = function(value) {
+		startTime = value;
+	}
+	
+	this.setTime = function(value) {
+		time = value;
+	}
+	
+	this.setColor = function(value) {
+		color = value;
+	}
+	
+	this.setLevel = function(value) {
+		level = value;
+	}
+	
+	this.setSelected = function(value) {
+		selected = value;
+	}
+	
+	this.cloneInto = function(anotherTrip) {
+		anotherTrip.setId(id);
+		anotherTrip.setStartTime(startTime);
+		anotherTrip.setTime(time);
+		anotherTrip.setLevel(level);
+		anotherTrip.setColor(color);
+		anotherTrip.setSelected(selected);
 	}
 	
 	this.toString = function() {
